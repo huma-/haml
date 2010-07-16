@@ -303,6 +303,32 @@ Available options are:
 {#quiet-option} `:quiet`
 : When set to true, causes warnings to be disabled.
 
+### Encodings
+
+When running on Ruby 1.9 and later, Sass is aware of the character encoding of documents
+and will handle them the same way that CSS would.
+By default, Sass assumes that all stylesheets are encoded
+using whatever coding system your operating system defaults to.
+For many users this will be `UTF-8`, the de facto standard for the web.
+For some users, though, it may be a more local encoding.
+
+If you want to use a different encoding for your stylesheet
+than your operating system default,
+you can use the `@charset` declaration just like in CSS.
+Add `@charset "encoding-name";` at the beginning of the stylesheet
+(before any whitespace or comments)
+and Sass will interpret it as the given encoding.
+Note that whatever encoding you use, it must be convertible to Unicode.
+
+Sass will also respect any Unicode BOMs and non-ASCII-compatible Unicode encodings
+[as specified by the CSS spec](http://www.w3.org/TR/CSS2/syndata.html#charset),
+although this is *not* the recommended way
+to specify the character set for a document.
+Note that Sass does not support the obscure `UTF-32-2143`,
+`UTF-32-3412`, `EBCDIC`, `IBM1026`, and `GSM 03.38` encodings,
+since Ruby does not have support for them
+and they're highly unlikely to ever be used in practice.
+
 ## CSS Extensions
 
 ### Nested Rules
@@ -724,7 +750,7 @@ For example:
 
     $translucent-red: rgba(255, 0, 0, 0.5);
     p {
-      color: opacify($translucent-red, 80%);
+      color: opacify($translucent-red, 0.8);
       background-color: transparentize($translucent-red, 50%);
     }
 
@@ -812,12 +838,12 @@ SassScript defines some useful functions
 that are called using the normal CSS function syntax:
 
     p {
-      color: hsl(0, 100%, 50%);
+      color: hsl(0, 100%, 0.5);
     }
 
 is compiled to:
 
-    #main {
+    p {
       color: #ff0000; }
 
 See {Sass::Script::Functions} for a full listing of Sass functions,
@@ -1515,6 +1541,7 @@ For example:
         width: $width;
         style: dashed;
       }
+    }
     p { @include sexy-border(blue); }
     h1 { @include sexy-border(blue, 2in); }
 

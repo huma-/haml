@@ -92,7 +92,7 @@ module Sass
         :number => /(-)?(?:(\d*\.\d+)|(\d+))([a-zA-Z%]+)?/,
         :color => HEXCOLOR,
         :bool => /(true|false)\b/,
-        :ident_op => %r{(#{Regexp.union(*IDENT_OP_NAMES.map{|s| Regexp.new(Regexp.escape(s) + '(?:\b|$)')})})},
+        :ident_op => %r{(#{Regexp.union(*IDENT_OP_NAMES.map{|s| Regexp.new(Regexp.escape(s) + "(?!#{NMCHAR}|$)")})})},
         :op => %r{(#{Regexp.union(*OP_NAMES)})},
       }
 
@@ -292,7 +292,7 @@ MESSAGE
       end
 
       def special_fun
-        return unless str1 = scan(/(calc|expression|progid:[a-z\.]*)\(/i)
+        return unless str1 = scan(/((-[\w-]+-)?calc|expression|progid:[a-z\.]*)\(/i)
         str2, _ = Haml::Shared.balance(@scanner, ?(, ?), 1)
         c = str2.count("\n")
         old_line = @line
